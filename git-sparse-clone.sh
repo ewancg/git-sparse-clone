@@ -50,7 +50,7 @@ fi
 
 if [ -z "$GIT" ]; then
 	if command -v git &> /dev/null; then
-		git="$(command -v git)"
+		GIT="$(command -v git)"
 	else
 		echo "git was not found"
 		exit
@@ -59,7 +59,7 @@ fi
 
 expected_git_version="2.27.0"
 
-if [ "$(printf "$(git -v | awk 'NF>1{print $NF}' -)\n${expected_git_version}" | sort -V | head -1)" != "${expected_git_version}" ]; then
+if [ $("$(git -v | awk 'NF>1{print $NF}' -)\n${expected_git_version}" | sort -V | head -1) != "${expected_git_version}" ]; then
 	echo "Git version doesn't support sparse-checkout"
 	exit
 fi
@@ -72,7 +72,7 @@ if [ -e $output_directory ]; then
 	exit
 fi
 
-git clone -n --depth=1 --filter=tree:0 $repository $output_directory
+$GIT clone -n --depth=1 --filter=tree:0 $repository $output_directory
 cd $output_directory
-git sparse-checkout set --no-cone ${paths[@]} > /dev/null
-git checkout
+$GIT sparse-checkout set --no-cone ${paths[@]} > /dev/null
+$GIT checkout
